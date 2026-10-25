@@ -39,7 +39,12 @@ lib/
 
 ## 스킬 사용법
 
-스킬은 [`.claude/skills/kakao-login-flutter/`](.claude/skills/kakao-login-flutter/) 폴더에 있어요.
+같은 스킬이 두 곳에 들어 있어요. 내용은 똑같아요.
+
+- [`.claude/skills/kakao-login-flutter/`](.claude/skills/kakao-login-flutter/): Claude Code용
+- [`.github/skills/kakao-login-flutter/`](.github/skills/kakao-login-flutter/): GitHub Copilot용
+
+스킬을 고칠 때는 두 폴더를 같이 고쳐 주세요.
 
 ### Claude Code
 
@@ -54,7 +59,11 @@ lib/
 
 "카카오 로그인 2단계 해줘"처럼 말로 해도 돼요.
 
-### 다른 에이전트 (GitHub Copilot 등)
+### GitHub Copilot (VS Code)
+
+이 프로젝트를 열면 바로 쓸 수 있어요. Copilot 채팅을 에이전트 모드로 두고 `/kakao-login-flutter`를 입력하거나, "카카오 로그인 2단계 해줘"처럼 말하면 돼요.
+
+### 다른 에이전트
 
 `SKILL.md` 형식은 여러 에이전트가 지원하는 공개 표준(Agent Skills)이에요. 쓰는 도구의 스킬 폴더에 `kakao-login-flutter` 폴더를 복사하세요.
 
