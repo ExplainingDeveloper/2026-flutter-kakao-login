@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/kakao_login_button.dart';
+import 'home_screen.dart';
+
 /// 로그인 화면
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -24,8 +27,11 @@ class LoginScreen extends StatelessWidget {
                 style: textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
               ),
               const Spacer(),
-              // TODO(카카오 3단계): 카카오 로그인 버튼
-              // TODO(카카오 4단계): 로그인 성공 시 홈 화면으로 이동
+              KakaoLoginButton(
+                onSuccess: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                ),
+              ),
               const SizedBox(height: 48),
             ],
           ),
