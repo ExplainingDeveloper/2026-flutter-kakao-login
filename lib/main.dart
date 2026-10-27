@@ -10,7 +10,7 @@ void main() async {
 
   // runApp() 호출 전 카카오 SDK 초기화
   await KakaoSdk.init(
-    nativeAppKey: '0d645524d601c6ca99f91f1ae74c0b62',
+    nativeAppKey: 'YOUR_NATIVE_APP_KEY',
   );
 
   // 저장된 카카오 토큰이 유효하면 바로 홈 화면으로 시작한다.

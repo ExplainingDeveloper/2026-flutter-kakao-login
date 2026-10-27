@@ -78,7 +78,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakao0d645524d601c6ca99f91f1ae74c0b62</string>
+				<string>kakaoYOUR_NATIVE_APP_KEY</string>
 			</array>
 		</dict>
 	</array>

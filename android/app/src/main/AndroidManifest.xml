@@ -35,7 +35,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- 카카오 로그인 리다이렉트 URI -->
-                <data android:scheme="kakao0d645524d601c6ca99f91f1ae74c0b62" android:host="oauth"/>
+                <data android:scheme="kakaoYOUR_NATIVE_APP_KEY" android:host="oauth"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
