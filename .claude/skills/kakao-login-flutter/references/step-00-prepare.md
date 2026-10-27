@@ -19,16 +19,39 @@
 
 1. **Android 패키지명**: `android/app/build.gradle.kts`(또는 `build.gradle`)의 `applicationId`
 2. **iOS 번들 ID**: `ios/Runner.xcodeproj/project.pbxproj`에서 Runner 타깃의 `PRODUCT_BUNDLE_IDENTIFIER`. `RunnerTests`로 끝나는 값은 제외한다.
-3. **디버그 키 해시**: 아래 명령으로 계산한다.
+3. **디버그 키 해시**: 키 해시는 서명 인증서의 SHA-1 지문을 Base64로 바꾼 값이다. 그래서 `keytool`로 SHA-1 지문을 뽑고 Base64로 바꾼다.
+   이 방법은 `openssl`이 필요 없어서 macOS, Linux, Windows에서 똑같이 된다. Windows에는 보통 `openssl`이 없다.
+
+   **1) SHA-1 지문 뽑기**
    ```bash
-   keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore \
-     -storepass android -keypass android | openssl sha1 -binary | openssl base64
+   keytool -list -v -alias androiddebugkey -keystore <키스토어 경로> -storepass android
    ```
+   - 출력에서 `SHA1:`로 시작하는 줄의 값을 쓴다. 예: `25:11:05:54:…:CF:EC:11`
+   - 키스토어 경로
+     - macOS, Linux: `~/.android/debug.keystore`
+     - Windows: `%USERPROFILE%\.android\debug.keystore` (PowerShell에서는 `$env:USERPROFILE\.android\debug.keystore`)
    - `keytool`이 PATH에 없으면 Android Studio에 들어 있는 JDK를 쓴다.
      - macOS: `/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/keytool`
-   - `~/.android/debug.keystore`가 없으면(Android 빌드를 한 번도 하지 않은 경우) 계산을 건너뛴다. 대신 "Android로 한 번 `flutter run` 한 뒤 다시 실행하거나, 3단계 이후 앱에서 `KakaoSdk.origin`으로 확인할 수 있다"고 안내한다.
-   - 결과는 `xxxxxxxxxxxxxxxxxxxxxxxxxxx=`처럼 28자 정도의 Base64 문자열이다.
-   - 결과가 `2jmj7l5rSw0yVb/vlWAYkK/YBwk=`이면 실패한 것이다. keytool이 실패해서 빈 입력의 해시가 나온 것이므로 사용자에게 보여주지 않는다. keytool의 에러 메시지를 확인하고, 계산에 실패했다고 안내한다.
+     - Windows (기본 설치 경로): `C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe`. 없으면 Android Studio 설치 폴더 안의 `jbr\bin`을 찾는다.
+
+   **2) 16진수 지문을 Base64로 바꾸기**
+   콜론(`:`)을 빼고, 16진수 두 자리씩 바이트로 바꾼 뒤 Base64로 인코딩한다. 결과가 같으면 어떤 도구를 써도 된다.
+   - macOS, Linux
+     ```bash
+     echo "<SHA1 값>" | tr -d ':' | xxd -r -p | base64
+     ```
+   - Windows PowerShell
+     ```powershell
+     $hex = "<SHA1 값>" -replace ':', ''
+     $bytes = for ($i = 0; $i -lt $hex.Length; $i += 2) { [Convert]::ToByte($hex.Substring($i, 2), 16) }
+     [Convert]::ToBase64String([byte[]]$bytes)
+     ```
+
+   **확인할 것**
+   - 결과는 `JREFVCcCYUji0lg6nQ2RQ2PP7BE=`처럼 `=`로 끝나는 28자 Base64 문자열이다.
+   - 키스토어 파일이 없으면 Android 빌드를 한 번도 하지 않은 것이다. 계산을 건너뛰고 "Android 기기나 에뮬레이터로 `flutter run`을 한 번 실행한 뒤 0단계를 다시 실행하면 계산할 수 있다"고 안내한다.
+   - `SHA1:` 줄이 없으면 keytool이 실패한 것이다. keytool 에러 메시지를 보여주고 계산에 실패했다고 안내한다.
+   - 다른 방법(`openssl` 파이프)으로 계산했는데 `2jmj7l5rSw0yVb/vlWAYkK/YBwk=`가 나오면 실패한 것이다. 빈 입력의 해시이므로 사용자에게 보여주지 않는다.
    - keytool이 `SHA1withRSA ... security risk` 경고를 출력해도 무시한다. 디버그 키에서는 정상이다.
 
 패키지명이나 번들 ID가 `com.example.`로 시작하면 한 줄로 알려준다. 출시 전에 바꾸는 경우가 많고, 바꾸면 콘솔에도 다시 등록해야 한다.
@@ -104,7 +127,9 @@
 
 **D-1. 폴더 준비 (스킬이 직접)**
 - 프로젝트 루트에 `assets/images/kakao/` 폴더를 만든다. 이미 있으면 그대로 둔다.
-- macOS면 `open assets/images/kakao`로 Finder에서 폴더를 열어 준다. 사용자가 받은 파일을 끌어다 넣기 쉽다.
+- 파일 탐색기로 폴더를 열어 준다. 사용자가 받은 파일을 끌어다 넣기 쉽다.
+  - macOS: `open assets/images/kakao`
+  - Windows: `explorer assets\images\kakao`
 - 폴더에 PNG가 이미 있으면 파일 목록을 보여주고, 바꾸고 싶을 때만 아래를 진행하라고 안내한다.
 
 **D-2. 이미지 받기**
